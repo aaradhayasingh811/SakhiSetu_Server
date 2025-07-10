@@ -94,15 +94,11 @@ exports.estimateHormones = async (req, res, next) => {
       isRegular = cycleVariance.every((variance) => variance <= 7);
     }
 
-    console.log( "age",user.age,
-        "avg_cycle_length", Number(averageCycleLength),
-        "day", parseInt(currentDay))
-
     // Call ML server
     const response = await axios.get(`${ML_SERVER_URL}/hormones/estimate`, {
       params: {
         age: user.age,
-        avg_cycle_length: Number(averageCycleLength),
+        avg_cycle_length: parseInt(averageCycleLength),
         day: parseInt(currentDay),
       },
     });

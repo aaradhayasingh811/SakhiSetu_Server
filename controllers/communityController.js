@@ -106,17 +106,35 @@ exports.getPost = async (req, res) => {
     // posttoset.viewCount += 1;
 
     // await posttoset.save();
-    const post = await Post.findById(req.params.id)
-      .populate('author', 'name username avatar')
-      .populate('category')
-      .populate('tags')
-      .populate({
+   const post = await Post.findById(req.params.id)
+  .populate('author', 'name username avatar')
+  .populate('category')
+  .populate('tags') 
+  .populate({
     path: 'comments',
-    populate: {
-      path: 'author',
-      select: 'name avatar'
-    }
+    populate: [
+      {
+        path: 'author',
+        select: 'name avatar'
+      },
+      {
+        path: 'reactions.userId',
+        select: 'name avatar'
+      },
+      {
+        path: 'parentCommentId',
+        populate: {
+          path: 'author',
+          select: 'name avatar'
+        }
+      }
+    ]
+  })
+  .populate({
+    path: 'reactions.userId',
+    select: 'name avatar'
   });
+
       console.log(post)
     
     if (!post) {
@@ -435,3 +453,39 @@ exports.resolveReport = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.addReplyToComment = async (req, res) => {
+  try {
+    const { content, postId, parentCommentId } = req.body;
+    const author = req.user.id; 
+
+    // Basic validation
+    if (!content || !postId || !parentCommentId) {
+      return res.status(400).json({ success: false, message: "Missing required fields." });
+    }
+
+    const parentComment = await Comment.findById(parentCommentId);
+    if (!parentComment) {
+      return res.status(404).json({ success: false, message: "Parent comment not found." });
+    }
+
+    // Create reply
+    const reply = await Comment.create({
+      content,
+      author,
+      postId,
+      parentCommentId
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Reply added successfully.",
+      data: reply
+    });
+  } catch (error) {
+    console.error("Error adding reply:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+

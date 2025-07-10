@@ -34,7 +34,7 @@ const postSchema = new mongoose.Schema({
   content: { type: String, required: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
-  tags: { type: [String] },
+tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
   reactions: [reactionSchema],
   viewCount: { type: Number, default: 0 },
