@@ -331,8 +331,8 @@ exports.predictCycle = async (req, res) => {
     const inputData = {
       age: user.age,
       cycle_number: periods.length,
-      cycle_length: -averageCycleLength,
-      prev_cycle_length: prev_cycle_length,
+      cycle_length: -parseInt(averageCycleLength),
+      prev_cycle_length: parseInt(prev_cycle_length),
       cycle_var:
         cycleVariance.length > 1
           ? Math.sqrt(
