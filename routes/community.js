@@ -18,6 +18,7 @@ router.post('/posts', communityController.createPost);
 router.get('/posts/:id', communityController.getPost);
 router.get('/categories/:categoryId/posts', communityController.getPostsByCategory);
 router.get('/search/posts', communityController.searchPosts);
+router.get('/my-posts', communityController.getUserPostsDetailed);
 
 // Comment routes
 router.post('/comments', communityController.addComment);

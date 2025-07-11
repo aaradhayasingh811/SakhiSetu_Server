@@ -500,4 +500,47 @@ exports.addReplyToComment = async (req, res) => {
   }
 };
 
+exports.getUserPostsDetailed = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const posts = await Post.find({ author: userId })
+      .populate('category', 'name description')
+      .populate('tags', 'name description')
+      .populate({
+        path: 'comments',
+        populate: [
+          {
+            path: 'author',
+            select: 'name username avatar'
+          },
+          {
+            path: 'reactions.userId',
+            select: 'name avatar'
+          },
+          {
+            path: 'parentCommentId',
+            select: 'content author'
+          }
+        ]
+      })
+      .populate('reactions.userId', 'name avatar')
+      .populate('author', 'name username avatar')
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: posts.length,
+      data: posts
+    });
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error while fetching posts'
+    });
+  }
+};
+
+
 
