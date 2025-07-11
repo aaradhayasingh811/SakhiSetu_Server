@@ -48,25 +48,7 @@ exports.getAllCategories = async (req, res) => {
   }
 };
 
-// Post Controllers
-// exports.createPost = async (req, res) => {
-//   try {
-//     console.log("hit")
-//     const post = new Post({
-//       ...req.body,
-//       author: req.user._id
-//     });
 
-//     console.log(post)
-//     await post.save();
-    
-//     await User.findByIdAndUpdate(req.user._id, { lastActive: new Date() });
-    
-//     res.status(201).json(post);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
 
 
 exports.createPost = async (req, res) => {
