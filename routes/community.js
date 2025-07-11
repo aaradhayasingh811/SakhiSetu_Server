@@ -37,4 +37,15 @@ router.patch('/notifications/:notificationId/read', communityController.markNoti
 router.get('/moderation/reports', communityController.getReportedItems);
 router.patch('/moderation/reports/:reportId/:action', communityController.resolveReport);
 
+router.post('/tags/resolve', async (req, res) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ message: 'Tag name is required' });
+
+  let tag = await Tag.findOne({ name });
+  if (!tag) {
+    tag = new Tag({ name });
+    await tag.save();
+  }
+  res.json(tag);
+});
 module.exports = router;

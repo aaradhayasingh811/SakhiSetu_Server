@@ -68,20 +68,29 @@ exports.getAllCategories = async (req, res) => {
 //   }
 // };
 
+
 exports.createPost = async (req, res) => {
   try {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ error: 'Unauthorized user' });
     }
-    console.log("hit")
 
     const { title, content, category, tags } = req.body;
+
+    if (!title || !content || !category) {
+      return res.status(422).json({ error: 'Title, content, and category are required.' });
+    }
+
+    const categoryExists = await Category.findById(category);
+    if (!categoryExists) {
+      return res.status(422).json({ error: 'Invalid category selected.' });
+    }
 
     const post = new Post({
       title,
       content,
       category,
-      tags,
+      tags: tags || [],
       author: req.user._id
     });
 
@@ -89,13 +98,16 @@ exports.createPost = async (req, res) => {
 
     await User.findByIdAndUpdate(req.user._id, { lastActive: new Date() });
 
-    res.status(201).json(post);
+    res.status(201).json({
+      success: true,
+      message: 'Post created successfully',
+      post
+    });
   } catch (error) {
-    console.error('Post creation error:', error);
-    res.status(400).json({ error: error.message });
+    console.error('Create Post Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
-
 
 exports.getPost = async (req, res) => {
   try {
