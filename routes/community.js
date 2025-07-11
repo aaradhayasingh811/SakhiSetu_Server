@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const communityController = require('../controllers/communityController');
 const {protect} = require('../middleware/authMiddleware');
-
+const { Tag, Category } = require('../models/community');
 router.use(protect);
 
 // Tag routes
